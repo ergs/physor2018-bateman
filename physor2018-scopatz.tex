@@ -18,6 +18,8 @@
 
 \newcommand{\ith}{i$^{\mathrm{th}}$\xspace}
 \newcommand{\jth}{j$^{\mathrm{th}}$\xspace}
+\newcommand{\pth}{p$^{\mathrm{th}}$\xspace}
+\newcommand{\qth}{q$^{\mathrm{th}}$\xspace}
 
 %
 % Define title...
@@ -29,7 +31,7 @@
 \author{%
   % FIRST AUTHORS j
   %
-  \textbf{Anthony M. Scopatz$^1$}\footnote{}\\
+  \textbf{Anthony M. Scopatz$^1$ and Aaron Meurer$^1$}\\
   $^1$University of South Carolina \\
   541 Main Street \#011, \\
   Columbia, SC 29208 \\
@@ -40,7 +42,7 @@
 % Insert authors' names and short version of title in lines below
 %
 \newcommand{\authorHead}      % Author's names here use et al. if more than 3
-           {Scopatz}
+           {Scopatz and Meurer}
 \newcommand{\shortTitle}      % Short title here (Shorten to fit all into a single line)
            {Limiting cases of the Binary Formulation of Decay Equations}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,53 +77,50 @@ is better suited for computation than the traditional expression.
 The canonical expression of the Bateman equations for a decay chain
 proceeding from a nuclide $A$ to a nuclide $Z$ at time
 $t$ following a specific path is as follows \cite{CETNAR2006640}:
-
 \begin{equation}
 \label{canon-bateman}
 N_C(t) = \frac{N_1(0)}{\lambda_C} \cdot \gamma \cdot \sum_{i=1}^C \lambda_i c_{i} e^{-\lambda_i t}
 \end{equation}
-
-The symbols in this expression have the following meaning:
-
-
-Additionally, $c_{i}` is defined as:
-
-.. math::
-
-    c_i = \prod_{j=1,i\ne j}^C \frac{\lambda_j}{\lambda_j - \lambda_i}
-
+The symbols in Equation \ref{canon-bateman} are described in Table \ref{nomeclature} in
+\S\ref{sec-nomen}. Additionally, define $c_{i}$ as:
+\begin{equation}
+\label{c_i-def}
+c_i = \prod_{j=1,i\ne j}^C \frac{\lambda_j}{\lambda_j - \lambda_i}
+\end{equation}
 Furthermore, the total chain branch ratio is defined as the product of the
-branch ratio between any two species [2]_:
+branch ratio between any two species \cite{harr2007precise}:
+\begin{equation}
+\label{gamma-total}
+\gamma = \prod_{i=i}^{C-1} \gamma_{i \to i+1}
+\end{equation}
 
-.. math::
-
-    \gamma = \prod_{i=i}^{C-1} \gamma_{i \to i+1}
-
-Minor modifications are needed for terminal species: the first nuclide of a
-decay chain and the ending stable species. By setting $C=1`, the Bateman
+Minor modifications to Equation \ref{canon-bateman} are needed for terminal species:
+the first nuclide of a decay chain and the ending stable species. By setting $C=1$, the Bateman
 equations can be reduced to simply:
-
-.. math::
-
-    N_C(t) = N_1(0) e^{-\lambda_1 t}
-
+\begin{equation}
+\label{n-single}
+N_C(t) = N_1(0) e^{-\lambda_1 t}
+\end{equation}
 For stable species, the appropriate equation is derived by taking the limit
-of when the decay constant of the stable nuclide ($\lambda_C`) goes to
-zero. Also notice that every $c_i` contains exactly one $\lambda_C`
-in the numerator which cancels with the $\lambda_C` in the denominator
+of when the decay constant of the stable nuclide ($\lambda_C$) goes to
+zero. Also notice that every $c_i$ contains exactly one $\lambda_C$
+in the numerator which cancels with the $\lambda_C$ in the denominator
 in front of the summation:
+\begin{equation}
+\label{stable-lim}
+\lim_{\lambda_C \to 0} N_C(t) = N_1(0)  \gamma \left[e^{-0t} + \sum_{i=1}^{C-1} \lambda_i \left(\frac{1}{0 - \lambda_i} \prod_{j=1,i\ne j}^{C-1} \frac{\lambda_j}{\lambda_j - \lambda_i} \right) e^{-\lambda_i t} \right]
+\end{equation}
+\begin{equation}
+\label{n-stable}
+N_C(t) = N_1(0)  \gamma \left[1.0 - \sum_{i=1}^{C-1} \left(\prod_{j=1,i\ne j}^{C-1} \frac{\lambda_j}{\lambda_j - \lambda_i} \right) e^{-\lambda_i t} \right]
+\end{equation}
 
-.. math::
-
-    \lim_{\lambda_C \to 0} N_C(t) = N_1(0)  \gamma \left[e^{-0t} + \sum_{i=1}^{C-1} \lambda_i \left(\frac{1}{0 - \lambda_i} \prod_{j=1,i\ne j}^{C-1} \frac{\lambda_j}{\lambda_j - \lambda_i} \right) e^{-\lambda_i t} \right]
-
-    N_C(t) = N_1(0)  \gamma \left[1.0 - \sum_{i=1}^{C-1} \left(\prod_{j=1,i\ne j}^{C-1} \frac{\lambda_j}{\lambda_j - \lambda_i} \right) e^{-\lambda_i t} \right]
-
-Now, certain chains have intermeadiate nuclides that are *almost* stable. For example, decaying
+From here, certain chains have intermeadiate nuclides which are \emph{almost} stable
+(within the limits of floating point precision). For example, decaying
 from Es-254 to Po-210 goes through U-238, which is very close to stable relative to all of the
-other nuclides in the chain. This can trigger floating point precision issues, where certain
-terms will underflow or overflow or generate NaNs. Obviously this is a situation to be avoided,
-if at all possible. To handle this sitiuation, let's call $p` the index of the nuclide
+other nuclides in the chain. This can trigger some terms of the Bateman equation to
+underflow or overflow or generate NaNs. Such a situation to be avoided,
+if at all possible. To handle these floating point issues, call $p$ the index of the nuclide
 that is almost stable. We can then note that the Bateman equations can be reduced by the
 observation that $\lambda_p \ll \lambda_{i\ne p}` after we separate out the p-term
 from the summation:
@@ -504,6 +503,7 @@ Triple-space before and after the table.
 Present your summary and conclusions here.
 
 \section*{NOMENCLATURE}
+\label{sec-nomen}
 
 Variables used throughout this paper have are described in Table \ref{nomeclature}.
 
@@ -515,14 +515,15 @@ Variables used throughout this paper have are described in Table \ref{nomeclatur
 \hline
 \textbf{Symbol} & \textbf{Units} & \texbf{Meaning} \\
 \hline
-$C$         & unitless  & Length of the decay chain \\
-$i$         & unitless  & Index for \ith species, on range $[1, C]$ \\
-$j$         & unitless  & Index for \jth species, on range $[1, C]$ \\
-$t$         & seconds   & Time \\
-$t_{1/2,i}$ & seconds   & Half-life of the \ith species \\
-$\lambda_i$ & 1/seconds & Decay constant of ith species, $ln(2)/t_{1/2,i}$ \\
-$N_i(t)$    & 1/cm$^3$  & Number density of the \ith species at time t \\
-$\gamma$    & unitless  & Total branch ratio for a chain \\
+$C$                  & unitless  & Length of the decay chain \\
+$i$                  & unitless  & Index for \ith species, on range $[1, C]$ \\
+$j$                  & unitless  & Index for \jth species, on range $[1, C]$ \\
+$t$                  & seconds   & Time \\
+$t_{1/2,i}$          & seconds   & Half-life of the \ith species \\
+$\lambda_i$          & 1/seconds & Decay constant of ith species, $ln(2)/t_{1/2,i}$ \\
+$N_i(t)$             & 1/cm$^3$  & Number density of the \ith species at time t \\
+$\gamma_{i \to i+1}$ & unitless  & Branch ratio bewteen \ith species and its child \\
+$\gamma$             & unitless  & Total branch ratio for a chain \\
 \hline
 \end{tabular}
 \end{table}
