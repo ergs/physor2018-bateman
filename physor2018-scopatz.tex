@@ -82,7 +82,7 @@ $t$ following a specific path is as follows \cite{CETNAR2006640}:
 \label{canon-bateman}
 N_C(t) = \frac{N_1(0)}{\lambda_C} \cdot \gamma \cdot \sum_{i=1}^C \lambda_i c_{i} e^{-\lambda_i t}
 \end{equation}
-The symbols in Equation \ref{canon-bateman} are described in Table \ref{nomeclature} in
+The symbols in Equation \ref{canon-bateman} are described in Table \ref{nomenclature} in
 \S\ref{sec-nomen}. Additionally, define $c_{i}$ as:
 \begin{equation}
 \label{c_i-def}
@@ -227,7 +227,7 @@ Bateman equations as a simple sum of exponentials
 \begin{equation}
 \label{sum-of-exp}
     N_C(t) = N_1(0) \sum_{i=1}^C k_{i} e^{-\lambda_i t}
-\end{expression}
+\end{equation}
 where the coefficients $k_i$ are defined as follows:
 \begin{itemize}
 \item \textbf{Single Nuclide in Chain:}
@@ -418,10 +418,6 @@ assumptions should be revisited.
 
 %%%%%%%%%%%%%%%%%%%%
 
-This is Section~\ref{sec:first}. It is followed by a subsection, that is,
-\ref{sec:second}. The style for subsection titles and all text in this template is defined
-in the \emph{physor2018.cls} file.  Make sure to avoid widow/orphan lines.
-
 \subsection{Subsection Title: First Character of Each Non-trivial Word is Uppercase}
 \label{sec:second}
 
@@ -486,15 +482,15 @@ Present your summary and conclusions here.
 \section*{NOMENCLATURE}
 \label{sec-nomen}
 
-Variables used throughout this paper have are described in Table \ref{nomeclature}.
+Variables used throughout this paper have are described in Table \ref{nomenclature}.
 
-\begin{table}
-\label{nomeclature}
+\begin{table}[!htb]
+\label{nomenclature}
 \caption{Symbols, Units, \& Meaning}
 \centering
-\begin{tabular}{|l|l|l|[htp]
+\begin{tabular}{|l|l|l|}
 \hline
-\textbf{Symbol} & \textbf{Units} & \texbf{Meaning} \\
+\textbf{Symbol} & \textbf{Units} & \textbf{Meaning} \\
 \hline
 $C$                  & unitless  & Length of the decay chain \\
 $i$                  & unitless  & Index for \ith species, on range $[1, C]$ \\
@@ -503,12 +499,12 @@ $p$                  & unitless  & Index for \pth species, which is special \\
 $q$                  & unitless  & Index for \qth species, whose half-life is the same as $p$ \\
 $t$                  & seconds   & Time \\
 $t_{1/2,i}$          & seconds   & Half-life of the \ith species \\
-$\lambda_i$          & 1/seconds & Decay constant of ith species, $ln(2)/t_{1/2,i}$ \\
+$\lambda_i$          & 1/seconds & Decay constant of ith species, $\ln(2)/t_{1/2,i}$ \\
 $N_i(t)$             & 1/cm$^3$  & Number density of the \ith species at time t \\
 $\gamma_{i \to i+1}$ & unitless  & Branch ratio bewteen \ith species and its child \\
 $\gamma$             & unitless  & Total branch ratio for a chain \\
 $k_i$                & unitless  & Coefficients allowing for sum-of-exponentials \\
-$a_i$                & 1/seconds & $-1/t_{1/2,i}$ \\
+$a_i$                & 1/seconds & Negative inverse of half-life, $-1/t_{1/2,i}$ \\
 \hline
 \end{tabular}
 \end{table}
