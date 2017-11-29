@@ -286,143 +286,131 @@ where the coefficients $k_i$ are defined as follows:
 \end{equation}
 \end{itemize}
 If the $k_i$ above are computed at run time then the this expression results in much more
-computational effort that than the original Bateman equations since $\gamma/\lambda_C`
-are brought into the summation. However, when $k_i` are pre-caluclated,
-many floating point operations are saved by avoiding explicitly computing $c_i`.
+computational effort that than the original Bateman equations since $\gamma/\lambda_C$
+are brought into the summation. However, when $k_i$ are pre-caluclated,
+many floating point operations are saved by avoiding explicitly computing $c_i$.
 
-The second strategy is to note that computers are much better at dealing with powers of
-2 then then any other base, even $e`. Thus the ``exp2(x)`` function, or $2^x`,
-is faster than the natural exponential function ``exp(x)``, $e^x`.  As proof of this
-the following are some simple timing results:
-
-.. code-block:: python
-
-    In [1]: import numpy as np
-
-    In [2]: r = np.random.random(1000) / np.random.random(1000)
-
-    In [3]: %timeit np.exp(r)
-    10000 loops, best of 3: 26.6 µs per loop
-
-    In [4]: %timeit np.exp2(r)
-    10000 loops, best of 3: 20.1 µs per loop
-
-This is a savings of about 25%.  Since the core of the Bateman equations are exponentials,
-it is worthwhile to squeeze this algorithm as much as possible.  Luckily, the decay constant
+The second strategy is to note that computers are much better at computing powers of
+2 then then any other base, even $e$. Thus the \texttt{exp2(x)} function, or $2^x$,
+is faster than the natural exponential function \texttt{exp(x)}, $e^x$.
+This is a savings is between 20-25\% on modern processors.  Since the core of the Bateman equations
+are exponentials, it is worthwhile to recast these equations if possible. Luckily, the decay constant
 provides an intrinsic mechanism to convert to base-2:
-
-.. math::
-
+\begin{equation}
+\label{n-base-2-0}
     N_C(t) = N_1(0) \sum_{i=1}^C k_{i} e^{-\lambda_i t}
-
+\end{equation}
+\begin{equation}
+\label{n-base-2-1}
     N_C(t) = N_1(0) \sum_{i=1}^C k_{i} e^{\frac{-\ln(2)\cdot t}{t_{1/2,i}}}
-
+\end{equation}
+\begin{equation}
+\label{n-base-1}
     N_C(t) = N_1(0) \sum_{i=1}^C k_{i} 2^{\frac{-t}{t_{1/2,i}}}
-
-This expression can be further collapsed by defining $a` to be the precomputed
+\end{equation}
+This expression can be further collapsed by defining $a$ to be the precomputed
 exponent values:
-
-.. math::
-
+\begin{equation}
+\label{a-def}
     a_i = \frac{-1}{t_{1/2,i}}
-
+\end{equation}
 Thus, the final form of the binary representation of the Bateman equations are
 as follows:
-
-**General Formulation:**
-
-.. math::
-
+\begin{equation}
+\label{final-form-a}
     N_C(t) = N_1(0) \sum_{i=1}^C k_{i} 2^{a_i t}
-
-where the $k_i` are as listed above.  However, for practical purposes, it is better to
-compute the $k_i` from half-lives rather than decay constants.  This is because they
+\end{equation}
+where the $k_i$ are as listed above.  However, for practical purposes, it is better to
+compute the $k_i$ from half-lives rather than decay constants.  This is because they
 provide less floating point error, fewer oppurtunities to underflow or overflow to NaN or infinity,
-and a better mechanism for detecting stability. Thus, alternatively, the $k_i` are computed
-as:
+and a better mechanism for detecting stability.
 
-**Single Nuclide in Chain:**
-
-.. math::
-
+Thus, alternatively, the $k_i$ are computedas:
+\begin{itemize}
+\item \textbf{Single Nuclide in Chain:}
+\begin{equation}
+\label{k-bin-single}
     k_i = 1
-
-**Last Nuclide Unstable:**
-
-.. math::
-
+\end{equation}
+\item \textbf{Last Nuclide Unstable:}
+\begin{equation}
+\label{k-bin-unstable}
     k_i = \gamma t_{1/2,i}^{C-2} t_{1/2,C} \prod_{j\ne i}^{C} \frac{1}{t_{1/2,i} - t_{1/2,j}}
-
-
-**Last Nuclide Stable:**
-
-.. math::
-
+\end{equation}
+\item \textbf{Last Nuclide Stable:}
+\begin{equation}
+\label{k-bin-stable-0}
     k_i = -\gamma t_{1/2,i}^{C-2} \prod_{j\ne i}^{C-1} \frac{1}{t_{1/2,i} - t_{1/2,j}}
-
+\end{equation}
+\begin{equation}
+\label{k-bin-stable-1}
     k_C = \gamma
-
-
-**Last Nuclide Unstable and pth Almost Stable:**
-
-.. math::
-
+\end{equation}
+\item \textbf{Last Nuclide Unstable and \pth Almost Stable:}
+\begin{equation}
+\label{k-bin-unstable-p-almost-0}
     k_{i\ne p} = -\frac{\gamma t_{1/2,C}}{t_{1/2,p}} t_{1/2,i}^{C-2} \prod_{j\ne i,p}^C \frac{1}{t_{1/2,i} - t_{1/2,j}}
-
+\end{equation}
+\begin{equation}
+\label{k-bin-unstable-p-almost-1}
     k_p = \frac{\gamma t_{1/2,C}}{t_{1/2,p}}
-
-
-**Last Nuclide Stable and pth Almost Stable:**
-
-.. math::
-
+\end{equation}
+\item \textbf{Last Nuclide Stable and \pth Almost Stable:}
+\begin{equation}
+\label{k-bin-stable-p-almost-0}
     k_{i\ne p,C} = -\gamma t_{1/2,i}^{C-2} \prod_{j\ne i}^{C-1} \frac{1}{t_{1/2,i} - t_{1/2,j}}
-
+\end{equation}
+\begin{equation}
+\label{k-bin-stable-p-almost-1}
     k_p = -\gamma
-
+\end{equation}
+\begin{equation}
+\label{k-bin-stable-p-almost-2}
     k_C = \gamma
-
-
-**Half-life Degeneracy Between pth and qth:**
-
-.. math::
-
+\end{equation}
+\item \textbf{Half-life Degeneracy Between \pth and \qth:}
+\begin{equation}
+\label{k-bin-pq-degen-0}
     k_i = \gamma t_{1/2,i}^{C-2} t_{1/2,C} \prod_{j\ne i}^{C} \frac{1}{t_{1/2,i} - t_{1/2,j}}
-
+\end{equation}
+\begin{equation}
+\label{k-bin-pq-degen-1}
     k_p = \gamma\ln(2) t_{1/2,p}^{C-4} t_{1/2,C}  t \prod_{j\ne p,q}^C \frac{1}{t_{1/2,p} - t_{1/2,j}}
-
+\end{equation}
+\begin{equation}
+\label{k-bin-pq-degen-2}
     k_q = 0
-
-With completely precomputed $k`, $a`, and the ``exp2()`` function, this
+\end{equation}
+\end{itemize}
+With completely precomputed $k$, $a$, and the \texttt{exp2()} function, this
 formulation minimizes the number of floating point operations while completely
 preserving physics. No assumptions were made aside from the Bateman equations
-themselves in this proof.
+themselves.
 
 Note that it is not possible to reduce the number of operations further.  This
-is because  $k` and $a` cannot be combined without adding further
+is because  $k$ and $a$ cannot be combined without adding further
 operations.
 
-***************************************
-Implementation Specific Approximations
-***************************************
+\section{IMPLEMENTATION SPECIFIC APPROXIMATIONS}
+\label{sec-impl-spec-approx}
 The above formulation holds generally for any decay chain.  However, certain
 approximations are used in practice to reduce the number of chains and terms
 that are calculated.
-
-1. Decay chains coming from spontaneous fission are only optionally tallied as they
+\begin{enumerate}
+\item Decay chains coming from spontaneous fission are only optionally tallied as they
    lead to an explosion of the total number of chains while contributing to
-   extraordinarily rare branches.
-2. Decay alphas are not treated as He-4 production.
-3. The $k_i` and $a_i` are filtered to reject terms where
-   $|k_i| / \max(|k_i|) < 10^{-16}`.
+   extraordinarily rare branches. Spontaneous fission decay chains are included by default.
+\item Decay alphas are not treated as He-4 production.
+\item The $k_i$ and $a_i$ are filtered to reject terms where
+   $|k_i| / \max(|k_i|) < 10^{-16}$.
    This filtering prevents excessive
    calculation from species which do not significantly contribute to
-   end atom fraction. The threshold $10^{-16}` was chosen as
+   end atom fraction. The threshold $10^{-16}$ was chosen as
    because it is a reasonable naive estimate of floating point error after
-   many operations. Note that we may filter only on the $k_i` because
-   $2^{a_i t} \le 1`.  That is, the exponentional component can only
+   many operations. Note that we may filter only on the $k_i$ because
+   $2^{a_i t} \le 1$.  That is, the exponentional component can only
    reduce the magnitude of a term, not increase it.
-
+\end{enumerate}
 In principle, each of these statements is reasonable. However, they
 may preclude desired behavior by users. In such a situation, these
 assumptions should be revisited.
@@ -519,6 +507,8 @@ $\lambda_i$          & 1/seconds & Decay constant of ith species, $ln(2)/t_{1/2,
 $N_i(t)$             & 1/cm$^3$  & Number density of the \ith species at time t \\
 $\gamma_{i \to i+1}$ & unitless  & Branch ratio bewteen \ith species and its child \\
 $\gamma$             & unitless  & Total branch ratio for a chain \\
+$k_i$                & unitless  & Coefficients allowing for sum-of-exponentials \\
+$a_i$                & 1/seconds & $-1/t_{1/2,i}$ \\
 \hline
 \end{tabular}
 \end{table}
