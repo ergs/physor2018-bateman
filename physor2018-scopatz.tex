@@ -315,7 +315,7 @@ where the coefficients $k_i$ are defined as follows:
 \label{k-degen-pq-0}
 \begin{split}
     k_i = & \frac{\gamma}{\lambda_C} \lambda_i \prod_{j\ne i}^C \frac{\lambda_j}{\lambda_j - \lambda_i} \\
-    k_p = & \frac{\gamma\lambda_p^2}{\lambda_C} t \prod_{j\ne p,q}^C \frac{\lambda_j}{\lambda_j - \lambda_p} \\
+    k_p = & t \frac{\gamma\lambda_p^2}{\lambda_C} \prod_{j\ne p,q}^C \frac{\lambda_j}{\lambda_j - \lambda_p} \\
     k_q = & 0
 \end{split}
 \end{equation}
@@ -324,6 +324,8 @@ If the $k_i$ above are computed at run time, then this expression results in muc
 computational effort that than the original Bateman equations since $\gamma/\lambda_C$
 are brought into the summation. However, when $k_i$ are pre-calculated,
 many floating point operations are saved by avoiding explicitly computing $c_i$.
+Note that the one exception to the precomputation is that $k_p$ in Eq. (\ref{k-degen-pq-0})
+has an additional $t$ term which must be multiplied at run time.
 
 The second strategy is to note that computers are much better at computing powers of
 2 then then any other base, even $e$. Thus the \texttt{exp2(x)} function, or $2^x$,
@@ -402,12 +404,14 @@ Thus, alternatively, the $k_i$ may be computed as,
 \label{k-bin-pq-degen-0}
 \begin{split}
     k_i = & \gamma t_{1/2,i}^{C-2} t_{1/2,C} \prod_{j\ne i}^{C} \frac{1}{t_{1/2,i} - t_{1/2,j}} \\
-    k_p = & \gamma\ln(2) t_{1/2,p}^{C-4} t_{1/2,C}  t \prod_{j\ne p,q}^C \frac{1}{t_{1/2,p} - t_{1/2,j}} \\
+    k_p = & t \gamma\ln(2) t_{1/2,p}^{C-4} t_{1/2,C}  \prod_{j\ne p,q}^C \frac{1}{t_{1/2,p} - t_{1/2,j}} \\
     k_q = & 0
 \end{split}
 \end{equation}
 \end{itemize}
-With completely precomputed $k$, $a$, and the \texttt{exp2()} function, this
+Again, the one exception to the precomputation is that $k_p$ in Eq. (\ref{k-bin-pq-degen-0})
+has an additional $t$ term which must be multiplied at run time.
+Still, with precomputed $k$, $a$, and the \texttt{exp2()} function, this
 formulation minimizes the number of floating point operations while completely
 preserving physics. No assumptions were made aside from the Bateman equations
 themselves.
