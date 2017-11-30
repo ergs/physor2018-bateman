@@ -3,14 +3,12 @@ from pprint import pprint
 from collections import defaultdict
 
 import numpy as np
-import matplotlib.pyplot as plt
 from sympy import exp
 
 from pyne import nucname
 from pyne.material import Material
 from pyne import cram
 
-from transmutagen.origen_all import TIME_STEPS
 
 
 np.set_printoptions(precision=18)
@@ -94,4 +92,3 @@ if __name__ == '__main__':
     pprint(c[nuc])
     print('Diff')
     pprint(diff_nuclide(d,c)[nuc])
-
