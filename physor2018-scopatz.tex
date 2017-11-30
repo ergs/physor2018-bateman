@@ -57,22 +57,51 @@
 \justify
 
 \begin{abstract}
-  Use 8.5$\times$11 paper size, with 1'' margins on all sides.  A required 200-250
-  word abstract starts on this line.  Leave two blank lines before ``ABSTRACT''
-  and one after.  Use 11 point Times New Roman here and single
-  spacing. The abstract is a very brief summary highlighting main
-  accomplishments, what is new, and how it relates to the state-of-the-art.
+This paper presents a binary formaulation of the Bateman equations
+for radioactive decay. This work includes various limiting cases
+that arrise in real-world calculations due to ill-behaved nuclear data
+or floating point arithmetic issues. A binary formulation is advantageous
+due to it speed, often orders of magnitude faster than a traditional solver.
+After the binary formulation with limiting cases has been described,
+this paper presents a verification study tha compares the binary solver
+to the Chebychev Rational Approximation Method (CRAM). The comparion
+between CRAM and the solver descibed demonstrates that the method is
+well within floating point precision for most nuclides and times.
 \end{abstract}
-\keywords{list of three to five key words}
+\keywords{bateman, decay, cram, pyne}
 
 \section{INTRODUCTION}
 \label{sec-intro}
 The Bateman equations governing radioactive decay are an important subexpression
 of generalized transmutation equations. In many cases, it is desirable to compute
-decay on its own, outside of the presence of an neutron or photon field.  In this
-case radioactive decay is a function solely on intrinsic physical parameters,
-namely half-lives. This document recasts the Bateman equations into a form that
-is better suited for computation than the traditional expression.
+decay on its own, outside of the presence of any neutron or photon field. In this
+case, radioactive decay is a function solely on intrinsic physical parameters:
+half-lives, branch ratios, and fission product yields. This document recasts the
+Bateman equations into a form that is better suited for computation than
+the traditional expression. Unlike previous work along these lines
+\cite{scopatz2015decay}, the formuation presented here aims to remove the
+assumption that the nuclear data is well-behaved.
+
+The fundemntal nuclear data is not well-behaved. There are degeneracies in
+half-lives. There are cases where prominent nuclides (such as U-238) are
+almost stable, relative to floating point precision. Since these issues
+cannot be tackled in the data itself, they must be handled by the
+mathematics. The standard Bateman equation is acceptable for the
+vast majority of nuclide decays. However, this work presents modifications
+to the standard equations for those limiting cases where usual solution
+falls apart.
+
+In \S\ref{sec-normal-method}, this paper derives the Bateman equation
+limiting cases using the traditional decay constant formulation.
+\S\ref{sec-binary} continues on to recast these in a binary formulation.
+The binary formualtion has computaional speed advanatages over the
+traditional method. \S\ref{sec-impl-spec-approx} the presents the implemntation
+specific approximations that are made with the equations found in
+\S\ref{sec-binary}. The assumptions listed in \S\ref{sec-impl-spec-approx}
+are much reduced from previous work \cite{scopatz2015decay}.
+\S\ref{sec-verify} verifies that the binary methodology by comparing its
+results to two alternative solvers. Finally, \S\ref{sec-conc} summarizes
+the work and results presented here.
 
 \section{BATEMAN EQUATIONS WITH LIMITING CASES}
 \label{sec-normal-method}
