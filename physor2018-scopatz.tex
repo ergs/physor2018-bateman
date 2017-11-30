@@ -286,7 +286,7 @@ where the coefficients $k_i$ are defined as follows:
 \begin{equation}
 \label{k-last-stable-0}
 \begin{split}
-    k_{i\ne C} = & -\gamma \prod_{j=1,i\ne j}^{C-1} \frac{\lambda_j}{\lambda_j - \lambda_i} \\
+    k_{i\ne C} = & -\gamma \prod_{j\ne i}^{C-1} \frac{\lambda_j}{\lambda_j - \lambda_i} \\
     k_C = & \gamma
 \end{split}
 \end{equation}
@@ -456,7 +456,7 @@ of comparison.
 In the comparisons here, 3491 nuclides were decayed from an initial unit
 concentration. Decays took place on a log-uniform time grid from $10$ to $10^{20}$
 seconds. Including $t=0$, there were 40 points in the time grid. This grid
-spans times domains that are generally of interest to nuclear
+spans time domains that are generally of interest to nuclear
 engineers. This nuclide \& time comparison thus provides a set of 139640
 decayed compositions to compare.
 
@@ -508,7 +508,7 @@ fundamental nuclear data. This decay-only matrix, thus, does not include
 any transmutation from neutron interactions. This usage is distinct from
 most CRAM applications, which are typically focused on depletion calculation.
 
-To create a fair comparison, both solvers where generated from the same
+To create a fair comparison, both solvers were generated from the same
 nuclear data. Half-lives and branch
 ratios came from the May 1$^{\mathrm{st}}$, 2017 release of ENSDF
 \cite{Bhat1992,ensdfmaintained}. Fission product yield data was obtained
