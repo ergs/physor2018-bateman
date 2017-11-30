@@ -544,8 +544,26 @@ to traditional nuclear engineering applications.
 
 
 \section{CONCLUSIONS}
+\label{sec-conc}
 
-Present your summary and conclusions here.
+In summary, the binary formulation of the traditional Bateman equations
+is a fast and correct solver for radioactive decay problems. Because this
+method minimzies run time arithmetic operations and takes advantage of
+\texttt{exp2()} speed over \texttt{exp()}, the solver here can be orders of
+magnitude faster than alternatives. Furthermore, in comparison to CRAM used
+for the same problem, the binary solver is correct to within floating point
+error for almost all cases. Those differences with CRAM which are
+unreasonably high stem from the approximations that CRAM makes. These
+approximations involve inverting many matricies. CRAM, thus, requires many
+more arithmetic operations and much longer run times.
+
+The advantage of deriving the limiting cases for the binary Bateman solver
+seen in Eq. (\ref{final-form-a})-(\ref{k-bin-pq-degen-2}) is that in enables
+a reduction in the number of assumptions made by previous work
+\cite{scopatz2015decay}. This in turn lead to a drastic reduction in the
+error of the previous solver. Properly handling degenerate half-lives and
+almost-stable nuclides improves the quality of the solution for the whole
+decay chain in which these issues arrise.
 
 \section*{NOMENCLATURE}
 \label{sec-nomen}
@@ -581,11 +599,5 @@ $a_i$                & 1/seconds & Negative inverse of half-life, $-1/t_{1/2,i}$
 \setlength{\baselineskip}{12pt}
 \bibliographystyle{physor}
 \bibliography{physor}
-
-\appendix
-\gdef\thesection{APPENDIX \Alph{section}}
-\section{Sample Appendix 1}
-\label{app:a}
-If necessary, include Appendices numbered in upper case alphabetical order. This is \ref{app:a}.
 
 \end{document}
