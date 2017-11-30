@@ -82,8 +82,8 @@ $t$ following a specific path is as follows \cite{CETNAR2006640}:
 \label{canon-bateman}
 N_C(t) = \frac{N_1(0)}{\lambda_C} \cdot \gamma \cdot \sum_{i=1}^C \lambda_i c_{i} e^{-\lambda_i t}
 \end{equation}
-The symbols in Equation \ref{canon-bateman} are described in Table \ref{nomenclature} in
-\S\ref{sec-nomen}. Additionally, define $c_{i}$ as:
+The symbols in Eq. (\ref{canon-bateman}) are described in
+Table \ref{nomenclature} in \S\ref{sec-nomen}. Additionally, define $c_{i}$ as:
 \begin{equation}
 \label{c_i-def}
 c_i = \prod_{j=1,i\ne j}^C \frac{\lambda_j}{\lambda_j - \lambda_i}
@@ -95,7 +95,7 @@ branch ratio between any two species \cite{harr2007precise}:
 \gamma = \prod_{i=i}^{C-1} \gamma_{i \to i+1}
 \end{equation}
 
-Minor modifications to Equation \ref{canon-bateman} are needed for terminal species:
+Minor modifications to Eq. (\ref{canon-bateman}) are needed for terminal species:
 the first nuclide of a decay chain and the ending stable species. By setting $C=1$, the Bateman
 equations can be reduced to simply:
 \begin{equation}
@@ -153,7 +153,7 @@ from the summation:
                                                         e^{-\lambda_i t}\right]
                            + \frac{\gamma\lambda_p}{\lambda_C} e^{-\lambda_p t}
 \end{equation}
-Equation \ref{almost-stable-3} for intermediate nuclides that are almost stable is valid when the last
+Eq. (\ref{almost-stable-3}) for intermediate nuclides that are almost stable is valid when the last
 nuclide in the chain is itself unstable. When the last nuclide is stable, both the \pth
 (almost stable nuclide) and the \Cth (last and stable nuclide) must be removed can be split off from
 the summation and handled separately. As previously, take $\lambda_C \to 0$ and
@@ -401,8 +401,11 @@ that are calculated.
    lead to an explosion of the total number of chains while contributing to
    extraordinarily rare branches. Spontaneous fission decay chains are included by default.
 \item Decay alphas are not treated as He-4 production.
-\item The $k_i$ and $a_i$ are filtered to reject terms where
-   $|k_i| / \max(|k_i|) < 10^{-16}$.
+\item The $k_i$ and $a_i$ are filtered to reject terms where,
+   \begin{equation}
+   \label{filter-cond}
+   \frac{|k_i|}{\max(|k_i|)} < 10^{-16}
+   \end{equation}
    This filtering prevents excessive
    calculation from species which do not significantly contribute to
    end atom fraction. The threshold $10^{-16}$ was chosen as
@@ -414,6 +417,32 @@ that are calculated.
 In principle, each of these statements is reasonable. However, they
 may preclude desired behavior by users. In such a situation, these
 assumptions should be revisited.
+
+\section{CRAM Comparison}
+\label{sec-cram}
+To verify that the binary formualtion of the Bateman equations as presented in
+Eq. (\ref{final-form-a})-(\ref{k-bin-pq-degen-2}) is correct, its implementaion
+can be compared to the Chebychev Rational Approximation Method (CRAM)
+for transmutation
+\cite{pusa2010computing,pusa2012correction}. Recent versions of PyNE (v0.5.4+)
+now include a both a binary Bateman solver and a CRAM solver.
+The CRAM solver is code generated using SymPy \cite{10.7717/peerj-cs.103},
+while the binary Bateman solver is code generated using a custom algorithm.
+
+For the CRAM solver, a decay-only matrix can be constructed from the
+fundemental nuclear data. This decay-only matrix, thus, does not include
+any transmutation from neutron interactions. This usage is distinct from
+most CRAM solves, which are focused on depletion.
+
+To create a fair comparison, both solvers where generated from the same
+fundemental set of nuclear data. Half-lives and branch
+ratios came from the May 1$^{\mathrm{st}}$, 2017 release of ENSDF
+\cite{Bhat1992,ensdfmaintained}. Fission product yeild data was obtained
+from published WIMS-D results \cite{aldama2003wims}. Therefore, any differences
+in the results between the binary Bateman solver and the CRAM
+solver can be ascribed to differences in methodology, not differences in data.
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%
