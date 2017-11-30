@@ -225,10 +225,12 @@ $\lambda_p \ll \lambda_{i\ne p,C}$.
 Lastly, we must handle the degenerate case where two nuclides in a chain  have the same exact half-lives.
 This unfortunate situation arises out of the fundemental nuclear data. For example,
 \begin{enumerate}
-\item Lu-153 to Tm-149
+\item Lu-153 $\alpha$-decays to Tm-149, both nuclides have half-lives of 0.9 seconds.
+\item Ir-172 $\alpha$-decays to Re-168, both nuclides have half-lives of 4.4 seconds.
+\item Pt-183 $\alpha$-decays to Os-179, both nuclides have half-lives of 390 seconds.
 \end{enumerate}
-Call these the \pth and \qth
-species. To prevent underflow, overflow, and \texttt{NaN} values, we must separate these nuclides out of the summation
+Call the degenerate nuclides the \pth and \qth species. To prevent underflow, overflow,
+and \texttt{NaN} values, we must separate these nuclides out of the summation
 and then take the limit as $\lambda_q \to \lambda_p$.
 \begin{equation}
 \label{pq-same-0}
@@ -572,7 +574,7 @@ issues and results in the high errors seen here.
 Still, even though certain cases have high errors, no error exceeds 0.1.
 Additionally, the nuclides which have differences in excess of $10^{-4}$
 all come from relatively negligible decay chains. For example, this
-list includes transitions from Lu-153 to Er-149, Tl-177 to W-168, Es-254 to
+list includes transitions from Tl-177 to W-168, Es-254 to
 Pb-206, and Bh-267 to Pb-207. These initial species are rarely relevant
 to traditional nuclear engineering applications.
 
