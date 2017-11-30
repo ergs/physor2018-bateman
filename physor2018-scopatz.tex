@@ -223,8 +223,12 @@ $\lambda_p \ll \lambda_{i\ne p,C}$.
 \end{equation}
 
 Lastly, we must handle the degenerate case where two nuclides in a chain  have the same exact half-lives.
-This unfortunate situation arises out of the decremental nuclear data. Call these the \pth and \qth
-species. To prevent underflow, overflow, and NaNs, we must separate these nuclides out of the summation
+This unfortunate situation arises out of the fundemental nuclear data. For example,
+\begin{enumerate}
+\item Lu-153 to Tm-149
+\end{enumerate}
+Call these the \pth and \qth
+species. To prevent underflow, overflow, and \texttt{NaN} values, we must separate these nuclides out of the summation
 and then take the limit as $\lambda_q \to \lambda_p$.
 \begin{equation}
 \label{pq-same-0}
@@ -535,7 +539,7 @@ Thus the CRAM approximation order is chosen as 16 in the comparison here.
 
 \begin{figure}[!htb]
   \centering
-%  \includegraphics[scale=0.80]{./diff-hist.pdf}
+  \includegraphics[scale=0.80]{./diff-hist.pdf}
   \caption{A histogram of the absolute value of the differences between the
            binary Bateman solution $b(t, i\to j)$
            and the CRAM solution  $r_{16,16}(t, i\to j)$ for all decays
