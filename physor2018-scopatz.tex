@@ -477,19 +477,14 @@ tends to zero.
 
 \subsection{CRAM Comparison}
 \label{subsec-cram}
-To verify that the binary formualtion of the Bateman equations as presented in
-Eq. (\ref{final-form-a})-(\ref{k-bin-pq-degen-2}) is correct, its implementaion
-can be compared to the Chebychev Rational Approximation Method (CRAM)
-for transmutation
-\cite{pusa2010computing,pusa2012correction}. Recent versions of PyNE (v0.5.4+)
+Recent versions of PyNE (v0.5.4+)
 now include a both a binary Bateman solver and a CRAM solver.
 The CRAM solver is code generated using SymPy \cite{10.7717/peerj-cs.103},
 while the binary Bateman solver is code generated using a custom algorithm.
-
 For the CRAM solver, a decay-only matrix can be constructed from the
 fundemental nuclear data. This decay-only matrix, thus, does not include
 any transmutation from neutron interactions. This usage is distinct from
-most CRAM solves, which are focused on depletion.
+most usages of CRAM, which typically are focused on depletion calculation.
 
 To create a fair comparison, both solvers where generated from the same
 fundemental set of nuclear data. Half-lives and branch
@@ -507,6 +502,46 @@ Since we generally are dealing with \texttt{double} data (64-bit), rather than
 \texttt{float} data (32-bit), the floating point error is expected to be
 approximately $10^{-16}$ for an inital unit atom density $N_1(0) = 1$.
 Thus the CRAM approximation order is chosen as 16 in the comparsion here.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[scale=0.80]{./diff-hist.pdf}
+  \caption{A histogram of the absolute value of the differences between the
+           binary Bateman solution $b(t, i\to j)$
+           and the CRAM solution  $r_{16,16}(t, i\to j)$ for all decays
+           from an intial \ith nuclide to a \jth nuclide for all times.}
+  \label{fig-diff-hist}
+\end{figure}
+
+Call $b(t, i\to j)$ the binary Bateman concentration of the \jth nuclide
+coming from an initial unit concentration of the \ith nuclide at time $t$.
+Also denote $r_{16,16}(t, i\to j)$ as this same value, but instead as computed
+by a $16^{\mathrm{th}}$ order CRAM approximation. Fig.~\ref{fig-diff-hist}
+displays a histogram of the absolute value of the difference between
+$b(t, i\to j)$ and $r_{16,16}(t, i\to j)$ for all $i \to j$ for all times.
+This histogram is binned by decade from $10^{-32}$ to $1$.
+
+As can be seen in Fig.~\ref{fig-diff-hist}, the overwhelming majority of
+decay compositions that are computed fall within floating point precision
+($\le 10^{-16}$). For those times and nuclides which are not within precision,
+many of the remaining differences are within what might be considered
+expected floating point error for many arithmetic operations ($\le 10^{-8}$).
+
+This still leaves a handful (around 600 of millions) of nuclides and times
+where the difference is beyond acceptable floating point errors. Since differences
+in data may be discounted, these errors are likely caused by CRAM solves
+having relatively inaccurate eigenvalues for the decay problem. CRAM performs
+far more arithmetic operations when inverting the decay matrix the binary Bateman
+solver. This occationally leads to catastrophic floating point cancelation
+issues and results in the high errors seen here.
+
+Still, even though certain cases have high errors, no error exceeds 0.1.
+Additionally, the nuclides which have differences in excess of $10^{-4}$
+all come from relatively negligible decay chains. For example, this
+list includes transitions from Lu-153 to Er-149, Tl-177 to W-168, Es-254 to
+Pb-206, and Bh-267 to Pb-207. These initial species are rarely relevant
+to traditional nuclear engineering applications.
+
 
 \section{CONCLUSIONS}
 
