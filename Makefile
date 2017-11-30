@@ -9,7 +9,7 @@ $(manuscript).tex: diff-hist.pdf
 diff-hist.pdf: decay_analysis.ipynb
 	ipython nbconvert --ExecutePreprocessor.timeout=6000 --execute decay_analysis.ipynb
 
-all-via-pdf: $(manuscript).tex $(references).bib
+all-via-pdf:
 	pdflatex $(latexopt) $(manuscript)
 	bibtex $(manuscript).aux
 	pdflatex $(latexopt) $(manuscript)

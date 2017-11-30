@@ -62,10 +62,10 @@ for radioactive decay. This work includes various limiting cases
 that arise in real-world calculations due to ill-behaved nuclear data
 or floating point arithmetic issues. A binary formulation is advantageous
 due to it speed, often orders of magnitude faster than a traditional solver.
-After the binary formulation with limiting cases has been described,
-this paper presents a verification study that compares the binary solver
+After the description of the new binary method,
+a verification study that compares the binary solver
 to the Chebyshev Rational Approximation Method (CRAM). The comparison
-between CRAM and the solver described demonstrates that the method is
+between CRAM and the binary solver demonstrates that the method is
 well within floating point precision for most nuclides and times.
 \end{abstract}
 \keywords{bateman, decay, cram, pyne}
@@ -73,20 +73,20 @@ well within floating point precision for most nuclides and times.
 \section{INTRODUCTION}
 \label{sec-intro}
 The Bateman equations governing radioactive decay are an important subexpression
-of generalized transmutation equations. In many cases, it is desirable to compute
+of the generalized transmutation equations. In many cases, it is desirable to compute
 decay on its own, outside of the presence of any neutron or photon field. In this
-case, radioactive decay is a function solely on intrinsic physical parameters:
+case, radioactive decay is a function solely of intrinsic physical parameters:
 half-lives, branch ratios, and fission product yields. This document recasts the
 Bateman equations into a form that is better suited for computation than
 the traditional expression. Unlike previous work along these lines
 \cite{scopatz2015decay}, the formulation presented here aims to remove the
 assumption that the nuclear data is well-behaved.
 
-The demountable nuclear data is not well-behaved. There are degeneracies in
+The fundemental nuclear data is not well-behaved. There are degeneracies in
 half-lives. There are cases where prominent nuclides (such as U-238) are
-almost stable, relative to floating point precision. Since these issues
+almost stable relative to floating point precision. Since these issues
 cannot be tackled in the data itself, they must be handled by the
-mathematics. The standard Bateman equation is acceptable for the
+mathematics. The standard Bateman equations are acceptable for the
 vast majority of nuclide decays. However, this work presents modifications
 to the standard equations for those limiting cases where usual solution
 falls apart.
@@ -94,31 +94,32 @@ falls apart.
 In \S\ref{sec-normal-method}, this paper derives the Bateman equation
 limiting cases using the traditional decay constant formulation.
 \S\ref{sec-binary} continues on to recast these in a binary formulation.
-The binary formalization has computation speed advantageous over the
-traditional method. \S\ref{sec-impl-spec-approx} the presents the implantation
+The binary formulation has computation speed advantageous over the
+traditional decay constant method. \S\ref{sec-impl-spec-approx} presents implementation
 specific approximations that are made with the equations found in
 \S\ref{sec-binary}. The assumptions listed in \S\ref{sec-impl-spec-approx}
-are much reduced from previous work \cite{scopatz2015decay}.
-\S\ref{sec-verify} verifies that the binary methodology by comparing its
+have been reduced in number from previous work \cite{scopatz2015decay}.
+\S\ref{sec-verify} verifies the binary methodology by comparing its
 results to two alternative solvers. Finally, \S\ref{sec-conc} summarizes
-the work and results presented here.
+the work and the results presented here.
 
 \section{BATEMAN EQUATIONS WITH LIMITING CASES}
 \label{sec-normal-method}
 The canonical expression of the Bateman equations for a decay chain
 proceeding from a nuclide $A$ to a nuclide $Z$ at time
-$t$ following a specific path is as follows \cite{CETNAR2006640}:
+$t$ following a given pathway may be seen in Eq. (\ref{canon-bateman}) below \cite{CETNAR2006640}:
 \begin{equation}
 \label{canon-bateman}
 N_C(t) = \frac{N_1(0)}{\lambda_C} \cdot \gamma \cdot \sum_{i=1}^C \lambda_i c_{i} e^{-\lambda_i t}
 \end{equation}
 The symbols in Eq. (\ref{canon-bateman}) are described in
-Table \ref{nomenclature} in \S\ref{sec-nomen}. Additionally, define $c_{i}$ as:
+Table \ref{nomenclature} in \S\ref{sec-nomen}. Additionally, this expression requires that
+$c_{i}$ be defined as in Eq. (\ref{c_i-def}):
 \begin{equation}
 \label{c_i-def}
 c_i = \prod_{j=1,i\ne j}^C \frac{\lambda_j}{\lambda_j - \lambda_i}
 \end{equation}
-Furthermore, the total chain branch ratio is defined as the product of the
+Furthermore, the total chain branch ratio $\gamma$ is defined as the product of the
 branch ratio between any two species \cite{harr2007precise}:
 \begin{equation}
 \label{gamma-total}
@@ -126,15 +127,15 @@ branch ratio between any two species \cite{harr2007precise}:
 \end{equation}
 
 Minor modifications to Eq. (\ref{canon-bateman}) are needed for terminal species:
-the first nuclide of a decay chain and the ending stable species. By setting $C=1$, the Bateman
-equations can be reduced to simply:
+the first nuclide of a decay chain and the ending stable species. For the first nuclide in a chain,
+setting $C=1$ will reduce the Bateman equations to the simple form see in Eq. (\ref{n-single}):
 \begin{equation}
 \label{n-single}
 N_C(t) = N_1(0) e^{-\lambda_1 t}
 \end{equation}
 For stable species, the appropriate equation is derived by taking the limit
-of when the decay constant of the stable nuclide ($\lambda_C$) goes to
-zero. Also notice that every $c_i$ contains exactly one $\lambda_C$
+such that the decay constant of the stable nuclide ($\lambda_C$) goes to
+zero. Note that every $c_i$ contains exactly one $\lambda_C$
 in the numerator which cancels with the $\lambda_C$ in the denominator
 in front of the summation:
 \begin{equation}
@@ -146,14 +147,14 @@ in front of the summation:
 N_C(t) = N_1(0)  \gamma \left[1.0 - \sum_{i=1}^{C-1} \left(\prod_{j=1,i\ne j}^{C-1} \frac{\lambda_j}{\lambda_j - \lambda_i} \right) e^{-\lambda_i t} \right]
 \end{equation}
 
-From here, certain chains have intermediary nuclides which are \emph{almost} stable
+From here, certain chains have intermediate nuclides which are \emph{almost} stable
 (within the limits of floating point precision). For example, decaying
 from Es-254 to Po-210 goes through U-238, which is very close to stable relative to all of the
 other nuclides in the chain. This can trigger some terms of the Bateman equation to
-underflow or overflow or generate NaNs. Such a situation to be avoided,
+underflow, overflow, or generate \texttt{NaN} values. Such situations must be avoided,
 if at all possible. To handle these floating point issues, call $p$ the index of the nuclide
-that is almost stable. We can then note that the Bateman equations can be reduced by the
-observation that $\lambda_p \ll \lambda_{i\ne p}$ after we separate out the $p$-term
+that is almost stable. The Bateman equations can be reduced by the
+observation that $\lambda_p \ll \lambda_{i\ne p}$ after the $p$-term is separated out
 from the summation:
 \begin{equation}
 \label{almost-stable-0}
@@ -184,9 +185,9 @@ from the summation:
                            + \frac{\gamma\lambda_p}{\lambda_C} e^{-\lambda_p t}
 \end{equation}
 Eq. (\ref{almost-stable-3}) for intermediate nuclides that are almost stable is valid when the last
-nuclide in the chain is itself unstable. When the last nuclide is stable, both the \pth
-(almost stable nuclide) and the \Cth (last and stable nuclide) must be removed can be split off from
-the summation and handled separately. As previously, take $\lambda_C \to 0$ and
+nuclide in the chain is itself unstable. However, when the last nuclide is stable, both the \pth
+(almost stable nuclide) and the \Cth (last and stable nuclide) must be removed, split off from
+the summation, and handled separately. As previously, take $\lambda_C \to 0$ and
 $\lambda_p \ll \lambda_{i\ne p,C}$.
 \begin{equation}
 \label{last-stable-and-almost-stable-0}
@@ -534,7 +535,7 @@ Thus the CRAM approximation order is chosen as 16 in the comparison here.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[scale=0.80]{./diff-hist.pdf}
+%  \includegraphics[scale=0.80]{./diff-hist.pdf}
   \caption{A histogram of the absolute value of the differences between the
            binary Bateman solution $b(t, i\to j)$
            and the CRAM solution  $r_{16,16}(t, i\to j)$ for all decays
