@@ -13,6 +13,7 @@
 \usepackage{caption}
 \captionsetup{width=1.0\textwidth,font={bf,normalsize},skip=0.3cm,within=none,justification=centering}
 \usepackage{xspace}
+\usepackage{amsmath}
 
 %\usepackage[justification=centering]{caption}
 
@@ -191,19 +192,23 @@ the summation, and handled separately. As previously, take $\lambda_C \to 0$ and
 $\lambda_p \ll \lambda_{i\ne p,C}$.
 \begin{equation}
 \label{last-stable-and-almost-stable-0}
-   \frac{N_C(t)}{N_1(0)} = \frac{\gamma}{\lambda_C}\sum_{i\ne p}^{C-1} \left[\lambda_i \frac{\lambda_C}{\lambda_C - \lambda_i} \frac{\lambda_p}{\lambda_p - \lambda_i}
+\begin{split}
+   \frac{N_C(t)}{N_1(0)} = & \frac{\gamma}{\lambda_C}\sum_{i\ne p}^{C-1} \left[\lambda_i \frac{\lambda_C}{\lambda_C - \lambda_i} \frac{\lambda_p}{\lambda_p - \lambda_i}
                                                         \left(\prod_{j\ne i,p}^{C-1} \frac{\lambda_j}{\lambda_j - \lambda_i}\right)
-                                                        e^{-\lambda_i t}\right]
-                           + \frac{\gamma}{\lambda_C} \lambda_p \frac{\lambda_C}{\lambda_C - \lambda_p} \left(\prod_{j\ne p}^{C-1} \frac{\lambda_j}{\lambda_j - \lambda_p} \right) e^{-\lambda_p t}
-                           + \frac{\gamma}{\lambda_C} \lambda_C \frac{\lambda_p}{\lambda_p - \lambda_C} \left(\prod_{j\ne p}^{C-1} \frac{\lambda_j}{\lambda_j - \lambda_C} \right) e^{-\lambda_C t}
+                                                        e^{-\lambda_i t}\right] \\
+                           & + \frac{\gamma}{\lambda_C} \lambda_p \frac{\lambda_C}{\lambda_C - \lambda_p} \left(\prod_{j\ne p}^{C-1} \frac{\lambda_j}{\lambda_j - \lambda_p} \right) e^{-\lambda_p t} \\
+                           & + \frac{\gamma}{\lambda_C} \lambda_C \frac{\lambda_p}{\lambda_p - \lambda_C} \left(\prod_{j\ne p}^{C-1} \frac{\lambda_j}{\lambda_j - \lambda_C} \right) e^{-\lambda_C t}
+\end{split}
 \end{equation}
 \begin{equation}
 \label{last-stable-and-almost-stable-1}
-   \frac{N_C(t)}{N_1(0)} = \gamma\sum_{i\ne p}^{C-1} \left[\frac{\lambda_i \lambda_p}{(\lambda_C - \lambda_i)(\lambda_p - \lambda_i)}
+\begin{split}
+   \frac{N_C(t)}{N_1(0)} = & \gamma\sum_{i\ne p}^{C-1} \left[\frac{\lambda_i \lambda_p}{(\lambda_C - \lambda_i)(\lambda_p - \lambda_i)}
                                                         \left(\prod_{j\ne i,p}^{C-1} \frac{\lambda_j}{\lambda_j - \lambda_i}\right)
-                                                        e^{-\lambda_i t}\right]
-                           + \frac{\gamma\lambda_p}{\lambda_C - \lambda_p} \left(\prod_{j\ne p}^{C-1} \frac{\lambda_j}{\lambda_j} \right) e^{-\lambda_p t}
-                           + \frac{\gamma\lambda_p}{\lambda_p - \lambda_C} \left(\prod_{j\ne p}^{C-1} \frac{\lambda_j}{\lambda_j} \right) e^{-\lambda_C t}
+                                                        e^{-\lambda_i t}\right] \\
+                           & + \frac{\gamma\lambda_p}{\lambda_C - \lambda_p} \left(\prod_{j\ne p}^{C-1} \frac{\lambda_j}{\lambda_j} \right) e^{-\lambda_p t}\\
+                           & + \frac{\gamma\lambda_p}{\lambda_p - \lambda_C} \left(\prod_{j\ne p}^{C-1} \frac{\lambda_j}{\lambda_j} \right) e^{-\lambda_C t}
+\end{split}
 \end{equation}
 \begin{equation}
 \label{last-stable-and-almost-stable-2}
@@ -234,9 +239,11 @@ and \texttt{NaN} values, we must separate these nuclides out of the summation
 and then take the limit as $\lambda_q \to \lambda_p$.
 \begin{equation}
 \label{pq-same-0}
-   \frac{N_C(t)}{N_1(0)} = \frac{\gamma}{\lambda_C}\sum_{i\ne p,q}^{C} \left[\lambda_i \left(\prod_{j\ne i}^{C} \frac{\lambda_j}{\lambda_j - \lambda_i}\right) e^{-\lambda_i t}\right]
-                           + \frac{\gamma}{\lambda_C} \lambda_p \frac{\lambda_q}{\lambda_q - \lambda_p} \left(\prod_{j\ne p,q}^{C} \frac{\lambda_j}{\lambda_j - \lambda_p} \right) e^{-\lambda_p t}
-                           + \frac{\gamma}{\lambda_C} \lambda_q \frac{\lambda_p}{\lambda_p - \lambda_q} \left(\prod_{j\ne p,q}^{C} \frac{\lambda_j}{\lambda_j - \lambda_q} \right) e^{-\lambda_q t}
+\begin{split}
+   \frac{N_C(t)}{N_1(0)} = & \frac{\gamma}{\lambda_C}\sum_{i\ne p,q}^{C} \left[\lambda_i \left(\prod_{j\ne i}^{C} \frac{\lambda_j}{\lambda_j - \lambda_i}\right) e^{-\lambda_i t}\right] \\
+                           & + \frac{\gamma}{\lambda_C} \lambda_p \frac{\lambda_q}{\lambda_q - \lambda_p} \left(\prod_{j\ne p,q}^{C} \frac{\lambda_j}{\lambda_j - \lambda_p} \right) e^{-\lambda_p t} \\
+                           & + \frac{\gamma}{\lambda_C} \lambda_q \frac{\lambda_p}{\lambda_p - \lambda_q} \left(\prod_{j\ne p,q}^{C} \frac{\lambda_j}{\lambda_j - \lambda_q} \right) e^{-\lambda_q t}
+\end{split}
 \end{equation}
 \begin{equation}
 \label{pq-same-1}
