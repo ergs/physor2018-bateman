@@ -185,9 +185,10 @@ from the summation:
                                                         e^{-\lambda_i t}\right]
                            + \frac{\gamma\lambda_p}{\lambda_C} e^{-\lambda_p t}
 \end{equation}
-Eq. (\ref{almost-stable-3}) for intermediate nuclides that are almost stable is valid when the last
-nuclide in the chain is itself unstable. However, when the last nuclide is stable, both the \pth
-(almost stable nuclide) and the \Cth (last and stable nuclide) must be removed, split off from
+Eq. (\ref{almost-stable-3}) is valid when the last
+nuclide in the chain is itself unstable. However, when the last nuclide is stable,
+both the \pth (almost stable nuclide) and
+the \Cth (last and stable nuclide) must be removed, split off from
 the summation, and handled separately. As previously, take $\lambda_C \to 0$ and
 $\lambda_p \ll \lambda_{i\ne p,C}$.
 \begin{equation}
@@ -227,7 +228,7 @@ $\lambda_p \ll \lambda_{i\ne p,C}$.
                            -\gamma e^{-\lambda_p t} + \gamma
 \end{equation}
 
-Lastly, we must handle the degenerate case where two nuclides in a chain  have the same exact half-lives.
+Lastly, there remains degenerate case where two nuclides in a chain have the same exact half-lives.
 This unfortunate situation arises out of the fundemental nuclear data. For example,
 \begin{enumerate}
 \item Lu-153 $\alpha$-decays to Tm-149, both nuclides have half-lives of 0.9 seconds.
@@ -256,18 +257,21 @@ and then take the limit as $\lambda_q \to \lambda_p$.
    \frac{N_C(t)}{N_1(0)} = \frac{\gamma}{\lambda_C}\sum_{i\ne p,q}^{C} \left[\lambda_i \left(\prod_{j\ne i}^{C} \frac{\lambda_j}{\lambda_j - \lambda_i}\right) e^{-\lambda_i t}\right]
                            + \frac{\gamma\lambda_p^2}{\lambda_C} \left(\prod_{j\ne p,q}^{C} \frac{\lambda_j}{\lambda_j - \lambda_p} \right) t e^{-\lambda_p t}
 \end{equation}
-
+Eq. (\ref{canon-bateman})-(\ref{pq-same-2}) thus represent a complete system of equations that
+handle the relevant limiting cases which arise in normal computation. The first is to minimize
 
 \section{BINARY FORMULATION OF BATEMAN EQUATIONS WITH LIMITING CASES}
 \label{sec-binary}
 There are two main strategies which may be used to construct a version of these equations that
-is better suited to computation on modern processors.
+is better suited to computation on modern processors. The first strategy is to group and
+precompute all known constants. The second is to use more efficient operations.
 
-First, lets aim for minimizing the number of
-operations that must be performed to achieve the same result. This can be done
-by grouping constants together and pre-calculating them. This saves the computer from
-having to perform the same operations at run time.  It is possible to express the
-Bateman equations as a simple sum of exponentials
+The first strategy aims to minimizing the number of
+operations that must be performed to achieve the same result. This can be achieved
+by grouping constants together and pre-calculating them. Such a pre-calculation is possible
+because all of the nuclear data is known at compile time. This saves the computer from
+having to perform the same operations at run time every execution.
+The Bateman equations may thus be expressed as a simple sum of exponentials,
 \begin{equation}
 \label{sum-of-exp}
     N_C(t) = N_1(0) \sum_{i=1}^C k_{i} e^{-\lambda_i t}
@@ -287,46 +291,39 @@ where the coefficients $k_i$ are defined as follows:
 \item \textbf{Last Nuclide Stable:}
 \begin{equation}
 \label{k-last-stable-0}
-    k_{i\ne C} = -\gamma \prod_{j=1,i\ne j}^{C-1} \frac{\lambda_j}{\lambda_j - \lambda_i}
-\end{equation}
-\begin{equation}
-\label{k-last-stable-1}
-    k_C = \gamma
+\begin{split}
+    k_{i\ne C} = & -\gamma \prod_{j=1,i\ne j}^{C-1} \frac{\lambda_j}{\lambda_j - \lambda_i} \\
+    k_C = & \gamma
+\end{split}
 \end{equation}
 \item \textbf{Last Nuclide Unstable and \pth Almost Stable:}
 \begin{equation}
 \label{k-last-unstable-p-almost-stable-0}
-    k_{i\ne p} = -\frac{\gamma\lambda_p}{\lambda_C} \prod_{j\ne i,p}^C \frac{\lambda_j}{\lambda_j - \lambda_i}
-\end{equation}
-\begin{equation}
-\label{k-last-unstable-p-almost-stable-1}
-    k_p = \frac{\gamma\lambda_p}{\lambda_C}
+\begin{split}
+    k_{i\ne p} = & -\frac{\gamma\lambda_p}{\lambda_C} \prod_{j\ne i,p}^C \frac{\lambda_j}{\lambda_j - \lambda_i} \\
+    k_p = & \frac{\gamma\lambda_p}{\lambda_C}
+\end{split}
 \end{equation}
 \item \textbf{Last Nuclide Stable and \pth Almost Stable:}
 \begin{equation}
 \label{k-last-stable-p-almost-stable-0}
-    k_{i\ne p,C} = -\gamma \prod_{j\ne i}^{C-1} \frac{\lambda_j}{\lambda_j - \lambda_i}
 \end{equation}
 \begin{equation}
-\label{k-last-stable-p-almost-stable-1}
-    k_p = -\gamma
-\end{equation}
-\begin{equation}
-\label{k-last-stable-p-almost-stable-2}
-    k_C = \gamma
+\label{k-last-unstable-p-almost-stable-1}
+\begin{split}
+    k_{i\ne p,C} = & -\gamma \prod_{j\ne i}^{C-1} \frac{\lambda_j}{\lambda_j - \lambda_i} \\
+    k_p = & -\gamma \\
+    k_C = & \gamma
+\end{split}
 \end{equation}
 \item \textbf{Half-life Degeneracy Between \pth and \qth Nuclides:}
 \begin{equation}
 \label{k-degen-pq-0}
-    k_i = \frac{\gamma}{\lambda_C} \lambda_i \prod_{j\ne i}^C \frac{\lambda_j}{\lambda_j - \lambda_i}
-\end{equation}
-\begin{equation}
-\label{k-degen-pq-1}
-    k_p = \frac{\gamma\lambda_p^2}{\lambda_C} t \prod_{j\ne p,q}^C \frac{\lambda_j}{\lambda_j - \lambda_p}
-\end{equation}
-\begin{equation}
-\label{k-degen-pq-1}
-    k_q = 0
+\begin{split}
+    k_i = & \frac{\gamma}{\lambda_C} \lambda_i \prod_{j\ne i}^C \frac{\lambda_j}{\lambda_j - \lambda_i} \\
+    k_p = & \frac{\gamma\lambda_p^2}{\lambda_C} t \prod_{j\ne p,q}^C \frac{\lambda_j}{\lambda_j - \lambda_p} \\
+    k_q = & 0
+\end{split}
 \end{equation}
 \end{itemize}
 If the $k_i$ above are computed at run time then the this expression results in much more
