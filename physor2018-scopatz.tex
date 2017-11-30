@@ -440,14 +440,40 @@ decayed compositions to compare.
 
 \subsection{$N_1(t)$ Comparsion}
 \label{subsec-n1}
+For this first comparison, note that the solution for the initial nuclide is
+the relatively simple $N_1(t) = e^{-\lambda_1 t}$. Since this is analytic and
+easy to compute, the binary Bateman solver ought to compute this same
+value to within floating point error.  Call $b(t)$ the concetration of the
+same initial nuclide as computed by the binary Bateman solver.
+
+Fig.~\ref{fig-n1} shows the absolute value of the difference between
+the traditional Bateman solution $e^{-\lambda_1 t}$ and the binary
+solution presented here. The gray lines show the difference as a function
+of time for inidividual, representative nuclides in the set analyzed.
+The red curve in Fig.~\ref{fig-n1} displays the mean difference over all
+times, along with one standard deviation error bars.
 
 \begin{figure}[!htb]
   \centering
   \includegraphics[scale=0.80]{./n1-diff.pdf}
-  \caption{SCALE/TRITON-NEWT Model of BWR Assembly in Order to Show and Example of a Figure and a Multi-line Caption}
+  \caption{The difference between known decay of initial nuclide and the
+           binary bateman solution for all 3491 nuclides. The red line
+           is the average of the absolute value of difference with
+           error bars repesenting 1 standard deviation. The gray lines
+           are curves for a subselection of example nuclides which comprise
+           the mean.}
   \label{fig-n1}
 \end{figure}
 
+As can be seen from Fig.~\ref{fig-n1}, the mean difference tends to zero for
+higher decay times.  Moreover, this mean difference curve itself seems to
+follow an exponential decay. Importantly, all values in Fig.~\ref{fig-n1}
+fall within what could be resonably expected for floating point error for
+\texttt{double} precision computation. Additionally, the gray curves
+demonstate that for some indvidual nuclides, the difference has a minimum
+modal bound. These can be as high as $2.2\times 10^{-16}$. This higher
+difference modes persist at long time scales, even as the mean difference
+tends to zero.
 
 \subsection{CRAM Comparison}
 \label{subsec-cram}
