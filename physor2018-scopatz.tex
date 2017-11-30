@@ -326,7 +326,7 @@ where the coefficients $k_i$ are defined as follows:
 \end{split}
 \end{equation}
 \end{itemize}
-If the $k_i$ above are computed at run time then the this expression results in much more
+If the $k_i$ above are computed at run time, then this expression results in much more
 computational effort that than the original Bateman equations since $\gamma/\lambda_C$
 are brought into the summation. However, when $k_i$ are pre-calculated,
 many floating point operations are saved by avoiding explicitly computing $c_i$.
@@ -334,7 +334,8 @@ many floating point operations are saved by avoiding explicitly computing $c_i$.
 The second strategy is to note that computers are much better at computing powers of
 2 then then any other base, even $e$. Thus the \texttt{exp2(x)} function, or $2^x$,
 is faster than the natural exponential function \texttt{exp(x)}, $e^x$.
-This is a savings is between 20-25\% on modern processors.  Since the core of the Bateman equations
+This results in a run time savings between 20-25\% on modern processors.
+Since the core of the Bateman equations
 are exponentials, it is worthwhile to recast these equations if possible. Luckily, the decay constant
 provides an intrinsic mechanism to convert to base-2:
 \begin{equation}
@@ -363,10 +364,9 @@ as follows:
 \end{equation}
 where the $k_i$ are as listed above.  However, for practical purposes, it is better to
 compute the $k_i$ from half-lives rather than decay constants.  This is because they
-provide less floating point error, fewer opportunities to underflow or overflow to NaN or infinity,
-and a better mechanism for detecting stability.
-
-Thus, alternatively, the $k_i$ are computed as:
+provide less floating point error, fewer opportunities to underflow, overflow, or be \texttt{NaN} or
+$\infty$ valued. Furthermore, half-lives provide a better mechanism for detecting stability.
+Thus, alternatively, the $k_i$ may be computed as,
 \begin{itemize}
 \item \textbf{Single Nuclide in Chain:}
 \begin{equation}
@@ -381,66 +381,50 @@ Thus, alternatively, the $k_i$ are computed as:
 \item \textbf{Last Nuclide Stable:}
 \begin{equation}
 \label{k-bin-stable-0}
-    k_i = -\gamma t_{1/2,i}^{C-2} \prod_{j\ne i}^{C-1} \frac{1}{t_{1/2,i} - t_{1/2,j}}
-\end{equation}
-\begin{equation}
-\label{k-bin-stable-1}
-    k_C = \gamma
+\begin{split}
+    k_i = & -\gamma t_{1/2,i}^{C-2} \prod_{j\ne i}^{C-1} \frac{1}{t_{1/2,i} - t_{1/2,j}} \\
+    k_C = & \gamma
+\end{split}
 \end{equation}
 \item \textbf{Last Nuclide Unstable and \pth Almost Stable:}
 \begin{equation}
 \label{k-bin-unstable-p-almost-0}
-    k_{i\ne p} = -\frac{\gamma t_{1/2,C}}{t_{1/2,p}} t_{1/2,i}^{C-2} \prod_{j\ne i,p}^C \frac{1}{t_{1/2,i} - t_{1/2,j}}
-\end{equation}
-\begin{equation}
-\label{k-bin-unstable-p-almost-1}
-    k_p = \frac{\gamma t_{1/2,C}}{t_{1/2,p}}
+\begin{split}
+    k_{i\ne p} = & -\frac{\gamma t_{1/2,C}}{t_{1/2,p}} t_{1/2,i}^{C-2} \prod_{j\ne i,p}^C \frac{1}{t_{1/2,i} - t_{1/2,j}} \\
+    k_p = & \frac{\gamma t_{1/2,C}}{t_{1/2,p}}
+\end{split}
 \end{equation}
 \item \textbf{Last Nuclide Stable and \pth Almost Stable:}
 \begin{equation}
 \label{k-bin-stable-p-almost-0}
-    k_{i\ne p,C} = -\gamma t_{1/2,i}^{C-2} \prod_{j\ne i}^{C-1} \frac{1}{t_{1/2,i} - t_{1/2,j}}
-\end{equation}
-\begin{equation}
-\label{k-bin-stable-p-almost-1}
-    k_p = -\gamma
-\end{equation}
-\begin{equation}
-\label{k-bin-stable-p-almost-2}
-    k_C = \gamma
+\begin{split}
+    k_{i\ne p,C} = & -\gamma t_{1/2,i}^{C-2} \prod_{j\ne i}^{C-1} \frac{1}{t_{1/2,i} - t_{1/2,j}} \\
+    k_p = & -\gamma \\
+    k_C = & \gamma
+\end{split}
 \end{equation}
 \item \textbf{Half-life Degeneracy Between \pth and \qth:}
 \begin{equation}
 \label{k-bin-pq-degen-0}
-    k_i = \gamma t_{1/2,i}^{C-2} t_{1/2,C} \prod_{j\ne i}^{C} \frac{1}{t_{1/2,i} - t_{1/2,j}}
-\end{equation}
-\begin{equation}
-\label{k-bin-pq-degen-1}
-    k_p = \gamma\ln(2) t_{1/2,p}^{C-4} t_{1/2,C}  t \prod_{j\ne p,q}^C \frac{1}{t_{1/2,p} - t_{1/2,j}}
-\end{equation}
-\begin{equation}
-\label{k-bin-pq-degen-2}
-    k_q = 0
+\begin{split}
+    k_i = & \gamma t_{1/2,i}^{C-2} t_{1/2,C} \prod_{j\ne i}^{C} \frac{1}{t_{1/2,i} - t_{1/2,j}} \\
+    k_p = & \gamma\ln(2) t_{1/2,p}^{C-4} t_{1/2,C}  t \prod_{j\ne p,q}^C \frac{1}{t_{1/2,p} - t_{1/2,j}} \\
+    k_q = & 0
+\end{split}
 \end{equation}
 \end{itemize}
 With completely precomputed $k$, $a$, and the \texttt{exp2()} function, this
 formulation minimizes the number of floating point operations while completely
 preserving physics. No assumptions were made aside from the Bateman equations
 themselves.
+Note that it is not possible to reduce the number of operations further.
 
-Note that it is not possible to reduce the number of operations further.  This
-is because  $k$ and $a$ cannot be combined without adding further
-operations.
-
-\section{IMPLEMENTATION SPECIFIC APPROXIMATIONS}
+\section{IMPLEMENTATION SPECIFIC ADJUSTMENTS}
 \label{sec-impl-spec-approx}
-The above formulation holds generally for any decay chain.  However, certain
-approximations are used in practice to reduce the number of chains and terms
-that are calculated.
+The formulation presented in \S\ref{sec-binary} holds generally for any decay chain.
+However, certain modifications are used in practice to reduce the number of chains and terms
+that are calculated. The two modifications within PyNE's solver are:
 \begin{enumerate}
-\item Decay chains coming from spontaneous fission are only optionally tallied as they
-   lead to an explosion of the total number of chains while contributing to
-   extraordinarily rare branches. Spontaneous fission decay chains are included by default.
 \item Decay alphas are not treated as He-4 production.
 \item The $k_i$ and $a_i$ are filtered to reject terms where,
    \begin{equation}
@@ -450,12 +434,12 @@ that are calculated.
    This filtering prevents excessive
    calculation from species which do not significantly contribute to
    end atom fraction. The threshold $10^{-16}$ was chosen as
-   because it is a reasonable naive estimate of floating point error after
-   many operations. Note that we may filter only on the $k_i$ because
+   because it is a reasonable na\"ive estimate of floating point error after
+   many operations. Note that we may filter on only the $k_i$ because
    $2^{a_i t} \le 1$.  That is, the exponential component can only
    reduce the magnitude of a term, not increase it.
 \end{enumerate}
-In principle, each of these statements is reasonable. However, they
+In principle, these two statements are reasonable. However, they
 may preclude desired behavior by users. In such a situation, these
 assumptions should be revisited.
 
@@ -463,7 +447,7 @@ assumptions should be revisited.
 \section{METHOD VERIFICATION}
 \label{sec-verify}
 This section contains two comparisons of the binary Bateman equations
-as presented in Eq. (\ref{final-form-a})-(\ref{k-bin-pq-degen-2}). These
+as presented in Eq. (\ref{final-form-a})-(\ref{k-bin-pq-degen-0}). These
 comparisons verify that the method described here is correct, up to
 floating point error. The first comparison simply verifies that the
 initial nuclide decays properly. The second and more involved comparison
@@ -598,7 +582,7 @@ approximations involve inverting many matrices CRAM, thus, requires many
 more arithmetic operations and much longer run times.
 
 The advantage of deriving the limiting cases for the binary Bateman solver
-seen in Eq. (\ref{final-form-a})-(\ref{k-bin-pq-degen-2}) is that in enables
+seen in Eq. (\ref{final-form-a})-(\ref{k-bin-pq-degen-0}) is that in enables
 a reduction in the number of assumptions made by previous work
 \cite{scopatz2015decay}. This in turn lead to a drastic reduction in the
 error of the previous solver. Properly handling degenerate half-lives and
